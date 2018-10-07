@@ -37,6 +37,23 @@ public class TestMq {
             e.printStackTrace();
         }
     }
+    @Test
+    public void testReturnCallback(){
+        OrderRepairEvent orderRepairEvent = new OrderRepairEvent();
+        orderRepairEvent.setUid(1);
+        orderRepairEvent.setUdid("return_callback_1");
+        orderRepairEvent.setOrderCode(1);
+        orderRepairEvent.setRepairAddress(true);
+        orderRepairEvent.setAddressId("return_callback");
+        CorrelationData correlationData = new CorrelationData();
+        correlationData.setId(System.currentTimeMillis() + "");
+        producerTemplate.send("return_callback", orderRepairEvent, null,correlationData);
+        try {
+            Thread.sleep(10000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void testMQ(){
