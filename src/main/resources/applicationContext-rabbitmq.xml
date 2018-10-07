@@ -1,0 +1,50 @@
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/rabbit
+           http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="simpleMessageConverter" class="org.springframework.amqp.support.converter.SimpleMessageConverter"/>
+
+    <rabbit:connection-factory id="rabbitmq-connectionFactory" addresses="192.168.0.119:5672,192.168.0.200:5672"
+        requested-heartbeat="10" username="wuzhong" password="wuzhong" virtual-host="qg"
+        publisher-confirms="true" publisher-returns="true"
+    />
+
+    <bean id="confirmCallback" class="com.demo.message.RabbitTemplateConfirmCallback"/>
+    <bean id="returnCallback" class="com.demo.message.RabbitTemplateReturnCallback"/>
+
+    <rabbit:template id="amqpTemplate" channel-transacted="false" connection-factory="rabbitmq-connectionFactory"
+        message-converter="simpleMessageConverter"
+        confirm-callback="confirmCallback"
+        return-callback="returnCallback" mandatory="true"
+        reply-address="amq.topic/reply" reply-queue="queueReply">
+        <rabbit:reply-listener concurrency="10" prefetch="10"/>
+    </rabbit:template>
+    <rabbit:queue id="queueReply" name="qg:default:reply" auto-declare="false"/>
+
+    <rabbit:admin id="rabbitAdmin" connection-factory="rabbitmq-connectionFactory"/>
+
+    <!--发送消息 -->
+    <bean id="producerTemplate" class="com.demo.message.QGProducerTemplate" primary="true">
+        <property name="amqpTemplate" ref="amqpTemplate"/>
+    </bean>
+    <!--接收消息 -->
+    <bean id="consumerFactory" class="com.demo.message.internel.DefaultConsumerFactory">
+        <constructor-arg name="admin" ref="rabbitAdmin"/>
+        <constructor-arg name="connectionFactory" ref="rabbitmq-connectionFactory"/>
+        <constructor-arg name="context" value="default"/>
+        <constructor-arg name="simpleMessageConverter" ref="simpleMessageConverter"/>
+        <property name="concurrentConsumers" value="10"/>
+    </bean>
+    <bean id="delayConsumerFactory" class="com.demo.message.internel.DelayConsumerFactory">
+        <constructor-arg name="admin" ref="rabbitAdmin"/>
+        <constructor-arg name="connectionFactory" ref="rabbitmq-connectionFactory"/>
+        <constructor-arg name="context" value="default"/>
+        <constructor-arg name="simpleMessageConverter" ref="simpleMessageConverter"/>
+        <property name="concurrentConsumers" value="10"/>
+    </bean>
+</beans>
+
