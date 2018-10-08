@@ -144,7 +144,7 @@ public   class DelayConsumerFactory implements ApplicationContextAware {
 
         admin.declareQueue(queue);
 
-        //binding to amq.topic with  [ yoho_delay.2m.* ]
+        //binding to amq.topic with  [ qg_delay.2m.* ]
         String routingKey = "qg_delay." + consumer.getDelayInMinutes() + "m" + ".*";
         Binding binding =  BindingBuilder.bind(queue).to(topicExchange).with(routingKey);
         admin.declareBinding(binding);

@@ -14,7 +14,7 @@ public class ReplyHandler implements ChannelAwareMessageListener, QGMessageConsu
     private final Logger logger = LoggerFactory.getLogger(ReplyHandler.class);
     @Override
     public String getMessageTopic() {
-        return "notice_test";
+        return "rpc_test";
     }
 
     @Override
