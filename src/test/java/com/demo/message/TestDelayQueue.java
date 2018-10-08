@@ -17,10 +17,15 @@ public class TestDelayQueue {
     /**
      * OrderRepairEventHandler消息接受应答模式为：AcknowledgeMode#AUTO
      * OrderRepairEventHandler消费者对应的工厂为：DelayConsumerFactory
-     * 请求队列：qg:default:order_repair，其消费者：OrderRepairEventHandler
-     * 对应的消费者为：OrderRepairEventHandler
-     * 延迟队列为：delay:10m.queue
-     * 队列：qg_delay:default:order_repair
+     * 生产者连接的队列为：
+     *      queue: delay:10m.queue
+     *      exchange: amq.topic
+     *      Routing key: qg_delay.10m.*
+     *      该测试用例的生产者producerTemplate对应的Routing key位：qg_delay.10m.order_repair
+     * 消费者OrderRepairEventHandler连接的队列为：
+     *      queue: qg_delay:default:order_repair
+     *      exchange: qg.expire
+     *      Routing key: qg_delay.*.order_repair
      */
     @Test
     public void testDelayQueue(){

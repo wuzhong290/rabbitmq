@@ -16,6 +16,11 @@ public class TestManualAcks {
     @Resource
     private QGProducerTemplate producerTemplate;
 
+    /**
+     * NoticeHandlerACK消息接受应答模式为：AcknowledgeMode.MANUAL
+     * NoticeHandlerACK消费者对应的工厂为：DefaultConsumerFactory
+     * 请求队列：qg:default:notice，其消费者：NoticeHandlerACK
+     */
     @Test
     public void testMQ(){
         OrderRepairEvent orderRepairEvent = new OrderRepairEvent();
